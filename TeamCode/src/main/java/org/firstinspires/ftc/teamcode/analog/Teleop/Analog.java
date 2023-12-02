@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-//hi
+
 @TeleOp
 public class Analog extends LinearOpMode {
     @Override
