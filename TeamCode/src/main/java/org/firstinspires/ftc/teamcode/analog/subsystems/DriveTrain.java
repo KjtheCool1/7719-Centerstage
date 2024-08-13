@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.analog.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
+@Disabled
 public class DriveTrain extends LinearOpMode {
     public DriveTrain(DcMotor fL, DcMotor fR, DcMotor bL, DcMotor bR){
     }

@@ -18,7 +18,7 @@ public class Analog extends LinearOpMode {
         DcMotor fL = hardwareMap.dcMotor.get("frontLeft");
         DcMotor bL = hardwareMap.dcMotor.get("backLeft");
         DcMotor fR = hardwareMap.dcMotor.get("frontRight");
-        DcMotor bR= hardwareMap.dcMotor.get("backRight");
+        DcMotor bR = hardwareMap.dcMotor.get("backRight");
         DcMotor Lift = hardwareMap.dcMotor.get("Lift");
         DcMotor PullUp = hardwareMap.dcMotor.get("UP");
         DcMotor Intake = hardwareMap.dcMotor.get("Intake");
@@ -26,7 +26,8 @@ public class Analog extends LinearOpMode {
         Servo IW = hardwareMap.servo.get("Wrist");
         Servo PW = hardwareMap.servo.get("PullUpServo");
         Servo Outtake = hardwareMap.servo.get("Outtake");
-        boolean IntakeOpen = false;
+        Servo Plane = hardwareMap.servo.get("plane");
+
 
         fR.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -37,7 +38,7 @@ public class Analog extends LinearOpMode {
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
 
         imu.initialize(parameters);
 
@@ -48,13 +49,13 @@ public class Analog extends LinearOpMode {
         while (opModeIsActive()) {
 
             //--------------------------------------Drivetrain------------------------------------//
+            if (gamepad1.share) {
+                imu.resetYaw();
+            }
+
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-
-            if (gamepad1.x) {
-                imu.resetYaw();
-            }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -73,18 +74,20 @@ public class Analog extends LinearOpMode {
             bL.setPower(backLeftPower);
             fR.setPower(frontRightPower);
             bR.setPower(backRightPower);
-
-            if (gamepad1.right_bumper){
+/*
+            if (gamepad1.right_bumper) {
                 fL.setPower(frontLeftPower / 4.0);
                 bL.setPower(backLeftPower / 4.0);
                 fR.setPower(frontRightPower / 4.0);
                 bR.setPower(backRightPower / 4.0);
-            }else{
+            } else {
                 fL.setPower(frontLeftPower);
                 bL.setPower(backLeftPower);
                 fR.setPower(frontRightPower);
                 bR.setPower(backRightPower);
             }
+
+ */
 
             //-------------------------------------Lift-------------------------------------------//
             Lift.setPower(gamepad2.left_stick_y);
@@ -93,34 +96,52 @@ public class Analog extends LinearOpMode {
 
 
             //------------------------------------Intake------------------------------------------//
-            Intake.setPower(-gamepad1.right_trigger);
-            Conveyor.setPower(gamepad1.right_trigger);
 
-            if (gamepad2.y){
+
+            if (gamepad1.left_trigger > 0) {
+                Intake.setPower(1);
+                Conveyor.setPower(1);
+            } else if (gamepad1.right_trigger > 0) {
+                Intake.setPower(-1);
+                Conveyor.setPower(-1);
+            } else {
+                Intake.setPower(0);
+                Conveyor.setPower(0);
+            }
+
+
+            if (gamepad2.y) {
                 IW.setPosition(0.078);
             }
-            if (gamepad2.a){
-                IW.setPosition(0.05);
+            if (gamepad2.a) {
+                IW.setPosition(0.053);
             }
 
             //-----------------------------------------PullUp-------------------------------------//
             PullUp.setPower(gamepad2.right_trigger);
             PullUp.setPower(-gamepad2.left_trigger);
-            if (gamepad2.right_bumper){
+            if (gamepad2.right_bumper) {
                 PW.setPosition(0);
             }
-            if (gamepad2.left_bumper){
+            if (gamepad2.left_bumper) {
                 PW.setPosition(0.05);
             }
-            //----------------------------------Outtake------------------------------------------//
-            //Will probaby be an issue, if it is then take out the booleans
-            if (gamepad1.y){
+            if (gamepad2.b) {
+                PW.setPosition(0.025);
+            }
+            //------------------------------------Outtake------------------------------------------//
+            if (gamepad1.y) {
                 Outtake.setPosition(0);
-                IntakeOpen = true;
-            }else if (gamepad1.a){
-                Outtake.setPosition(0.1);
-                IntakeOpen = false;
+
+            } else if (gamepad1.a) {
+                Outtake.setPosition(0.32);
+            }
+
+            //--------------------------------------Plane-----------------------------------------//
+            if (gamepad2.share) {
+                Plane.setPosition(0.5);
             }
         }
     }
 }
+
